@@ -4,12 +4,15 @@ const bcrypt = require('bcryptjs');
 const Player = require('./models/Player');
 const Franchise = require('./models/Franchise');
 const Admin = require('./models/Admin');
-
-const MONGO_URI = 'mongodb://127.0.0.1:27017/auction_db';
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const migrate = async () => {
   try {
-    await mongoose.connect(MONGO_URI);
+    const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/auction_db';
+    
+    console.log('Connecting to MongoDB...');
+    await mongoose.connect(uri);
     console.log('MongoDB connected...');
 
     // Clear existing collections
