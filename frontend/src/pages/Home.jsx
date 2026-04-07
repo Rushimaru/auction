@@ -1,0 +1,100 @@
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import api from '../api/axios';
+
+const Home = () => {
+  const [franchises, setFranchises] = useState([]);
+  const [recentSold, setRecentSold] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [fRes, pRes] = await Promise.all([
+          api.get('/auction/franchises'),
+          api.get('/auction/players/all')
+        ]);
+        setFranchises(fRes.data);
+
+        // Filter sold players and take last 10 (or all) for marquee
+        const sold = pRes.data.filter(p => p.franchise_id !== null);
+        setRecentSold(sold.reverse().slice(0, 15));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="container" style={{ textAlign: 'center' }}>
+      <motion.h1
+        className="title gradient-text"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        શ્રી સમસ્ત મારુ પ્રજાપતિ પ્રગતિ મંડળ<br />PPL-2026
+      </motion.h1>
+
+      <motion.img
+        src="/image/franchiese/samaj-logo.png"
+        alt="Main Logo"
+        className="glowing"
+        style={{ width: '150px', marginBottom: '30px', borderRadius: '50%' }}
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.5 }}
+        onError={(e) => { e.target.style.display = 'none' }}
+      />
+
+      {recentSold.length > 0 && (
+        <div style={{ marginBottom: '40px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', padding: '10px 0' }}>
+          <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '10px' }}>🔥 RECENT TRANSFERS 🔥</h3>
+          <div className="marquee-container">
+            <div className="marquee-content">
+              {recentSold.map(player => (
+                <div key={player._id} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', margin: '0 30px', background: 'rgba(0,0,0,0.8)', padding: '5px 15px', borderRadius: '25px', border: '1px solid var(--accent-gold)' }}>
+                  <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <img src={player.image ? `/image/${player.image}` : 'https://via.placeholder.com/30'} alt="player" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+                  </div>
+                  <span style={{ fontWeight: 'bold', color: 'white' }}>{player.full_name}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>sold to</span>
+                  <span style={{ color: 'var(--accent-gold)' }}>{player.franchise_id?.frenchises_name}</span>
+                  <span style={{ background: 'var(--accent-gold)', color: 'black', padding: '2px 8px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 'bold' }}>₹{player.sold_price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <h2 style={{ marginBottom: '20px', color: 'var(--accent-gold)' }}>Franchises</h2>
+
+      <div className="grid grid-cols-4">
+        {franchises.map((franchise, idx) => (
+          <motion.div
+            key={franchise._id}
+            className="glass-panel"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+          >
+            <h3 style={{ marginBottom: '15px' }}>{franchise.frenchises_name}</h3>
+            <img
+              src={`/image/franchiese/${franchise.logo}`}
+              alt={franchise.frenchises_name}
+              style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px', border: '3px solid var(--accent-gold)' }}
+              onError={(e) => { e.target.src = 'https://via.placeholder.com/150?text=No+Logo' }}
+            />
+            <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+              <span>Budget: {franchise.remaining_amount} / {franchise.total_amount}</span>
+              <span>Players: {franchise.total_players}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
