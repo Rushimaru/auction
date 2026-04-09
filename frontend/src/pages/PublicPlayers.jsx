@@ -142,11 +142,24 @@ const PublicPlayers = () => {
             transition={{ duration: 0.2 }}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           >
-            <img
-              src={player.image ? `/image/${player.image}` : 'https://via.placeholder.com/150'}
-              alt={player.full_name}
-              style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
-            />
+            {player.image?.startsWith('http') ? (
+              <img
+                src={player.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]}
+                alt={player.full_name}
+                style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+              />
+            ) : player.image ? (
+              <img
+                src={`/image/${player.image}`}
+                alt={player.full_name}
+                style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+                onError={e => { e.target.parentElement.innerHTML = '<i class="fas fa-user" style="font-size: 80px; color: var(--text-muted); margin-bottom: 15px;"></i>'; }}
+              />
+            ) : (
+              <div style={{ width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px' }}>
+                <i className="fas fa-user" style={{ fontSize: '60px', color: 'var(--text-muted)' }}></i>
+              </div>
+            )}
             <h3 style={{ fontSize: '1.2rem', textAlign: 'center', marginBottom: '10px' }}>{player.full_name}</h3>
             <p style={{ color: 'var(--text-muted)' }}>{player.playing_role}</p>
 

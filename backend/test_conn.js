@@ -4,10 +4,15 @@ const dns = require('dns');
 // Bypass local DNS if SRV fails
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
-const user = 'rushimaru96_db_user';
-const pass = 'Rushi@123';
-const host = 'cluster0.3bcy0gm.mongodb.net';
-const db = 'auction_db';
+const user = process.env.MONGO_USER;
+const pass = process.env.MONGO_PASS;
+const host = process.env.MONGO_HOST || 'cluster0.3bcy0gm.mongodb.net';
+const db = process.env.MONGO_DB || 'auction_db';
+
+if (!user || !pass) {
+  console.error('❌ Missing required environment variables: MONGO_USER and MONGO_PASS');
+  process.exit(1);
+}
 
 // URL encode the password
 const encodedPass = encodeURIComponent(pass);

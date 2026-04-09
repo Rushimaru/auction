@@ -55,7 +55,13 @@ const Home = () => {
               {recentSold.map(player => (
                 <div key={player._id} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', margin: '0 30px', background: 'rgba(0,0,0,0.8)', padding: '5px 15px', borderRadius: '25px', border: '1px solid var(--accent-gold)' }}>
                   <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <img src={player.image ? `/image/${player.image}` : 'https://via.placeholder.com/30'} alt="player" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+                    {player.image?.startsWith('http') ? (
+                      <img src={player.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : player.image ? (
+                      <img src={`/image/${player.image}`} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => e.target.style.display = 'none'} />
+                    ) : (
+                      <i className="fas fa-user" style={{ fontSize: '15px' }}></i>
+                    )}
                   </div>
                   <span style={{ fontWeight: 'bold', color: 'white' }}>{player.full_name}</span>
                   <span style={{ color: 'var(--text-muted)' }}>sold to</span>

@@ -123,11 +123,24 @@ const AdminAuction = () => {
           
           {currentPlayer ? (
             <>
+            {currentPlayer.image?.startsWith('http') ? (
               <img 
-                src={currentPlayer.image ? `/image/${currentPlayer.image}` : 'https://via.placeholder.com/300'} 
+                src={currentPlayer.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]} 
                 alt="Player" 
                 style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px' }} 
               />
+            ) : currentPlayer.image ? (
+              <img 
+                src={`/image/${currentPlayer.image}`} 
+                alt="Player" 
+                style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px' }} 
+                onError={e => { e.target.parentElement.innerHTML = '<i class="fas fa-user" style="font-size: 150px; color: var(--text-muted); margin-bottom: 20px;"></i>'; }}
+              />
+            ) : (
+              <div style={{ width: '100%', height: '300px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                <i className="fas fa-user-tie" style={{ fontSize: '120px', color: 'var(--text-muted)' }}></i>
+              </div>
+            )}
               <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>{currentPlayer.full_name}</h2>
               <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
                 Role: {currentPlayer.playing_role} | Age: {currentPlayer.age} | Zone: {currentPlayer.zone_name}
