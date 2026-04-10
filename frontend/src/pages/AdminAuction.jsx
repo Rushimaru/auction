@@ -56,6 +56,11 @@ const AdminAuction = () => {
       setCurrentPlayer(targetPlayer || null);
       setFranchises(franchiseRes.data);
       
+      // If no player is found or player has no image, release the center loader
+      if (!targetPlayer || !targetPlayer.image) {
+        setImageLoading(false);
+      }
+      
       if (roles.length === 0) {
         setRoles([...new Set(allPlayers.map(p => p.playing_role))].filter(Boolean));
       }
