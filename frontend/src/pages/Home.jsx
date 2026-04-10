@@ -131,9 +131,15 @@ const Home = () => {
               onError={handleImageLoad}
               style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px', border: '3px solid var(--accent-gold)' }}
             />
-            <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              <span>Budget: {franchise.remaining_amount} / {franchise.total_amount}</span>
-              <span>Players: {franchise.total_players}</span>
+            <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '5px' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Budget:</span>
+                <span style={{ color: 'var(--accent-gold)', fontWeight: 'bold' }}>₹{franchise.remaining_amount} / {franchise.total_amount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Players Count:</span>
+                <span style={{ color: 'var(--accent-gold)', fontWeight: 'bold' }}>{franchise.total_players}</span>
+              </div>
             </div>
           </motion.div>
         ))}
