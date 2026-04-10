@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
+import Loader from '../components/Loader';
 
 const AdminAuction = () => {
   const { user } = useContext(AuthContext);
@@ -10,6 +11,9 @@ const AdminAuction = () => {
   
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [franchises, setFranchises] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   
   const [selectedFranchise, setSelectedFranchise] = useState('');
   const [price, setPrice] = useState('');
@@ -29,6 +33,8 @@ const AdminAuction = () => {
 
   const fetchData = async (role = roleFilter) => {
     try {
+      if (role !== roleFilter) setLoading(true); // show loader if switching roles
+      setImageLoading(true);
       const [franchiseRes, allPlayersRes] = await Promise.all([
         api.get('/auction/franchises'),
         api.get('/auction/players/all')
@@ -37,7 +43,6 @@ const AdminAuction = () => {
       const allPlayers = allPlayersRes.data;
       const unsoldPlayers = allPlayers.filter(p => !p.franchise_id && p.unsold_status === 0);
       
-      // Determine the next player based on the role filter
       const targetPlayer = role 
         ? unsoldPlayers.find(p => p.playing_role === role) 
         : unsoldPlayers[0];
@@ -53,6 +58,8 @@ const AdminAuction = () => {
       setSelectedFranchise('');
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,6 +71,7 @@ const AdminAuction = () => {
     }
 
     try {
+      setIsProcessing(true);
       await api.post('/auction/players/sell', {
         player_id: currentPlayer._id,
         franchise_id: selectedFranchise,
@@ -72,30 +80,39 @@ const AdminAuction = () => {
       setFlashing(true);
       setTimeout(() => setFlashing(false), 500);
       toast(`${currentPlayer.full_name} Sold!`, { className: 'toast-sold', icon: '🔥' });
-      fetchData(); // load next player
+      await fetchData(); 
     } catch (err) {
       toast.error(err.response?.data?.msg || 'Error selling player');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleUnsold = async () => {
     if (!window.confirm('Mark this player as Unsold?')) return;
     try {
+      setIsProcessing(true);
       await api.post('/auction/players/unsold', { player_id: currentPlayer._id });
       setFlashing(true);
       setTimeout(() => setFlashing(false), 500);
       toast(`${currentPlayer.full_name} Marked Unsold`, { className: 'toast-unsold', icon: '❌' });
-      fetchData();
+      await fetchData();
     } catch (err) {
       toast.error('Error marking unsold');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{ visibility: loading ? 'hidden' : 'visible' }}>
+      {(loading || isProcessing) && (
+        <Loader text={isProcessing ? "Processing Sale..." : "Boarding the Next Player..."} />
+      )}
       {flashing && <div className="flash-screen"></div>}
       <h2 className="title gradient-text">Live Auction Control Room</h2>
-
+      
+      {/* ... filter select with fetchData ... */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px', gap: '15px' }}>
         <h3 style={{ color: 'var(--text-main)', margin: 0, alignSelf: 'center' }}>🎯 Filter Next Player By Role:</h3>
         <select 
@@ -103,8 +120,9 @@ const AdminAuction = () => {
           style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
           value={roleFilter}
           onChange={(e) => {
-            setRoleFilter(e.target.value);
-            fetchData(e.target.value);
+            const role = e.target.value;
+            setRoleFilter(role);
+            fetchData(role);
           }}
         >
           <option value="">-- All Roles --</option>
@@ -123,18 +141,22 @@ const AdminAuction = () => {
           
           {currentPlayer ? (
             <>
+            {imageLoading && <div style={{ height: '300px', display: 'flex', alignItems: 'center' }}><Loader text="Rendering Player Info..." /></div>}
             {currentPlayer.image?.startsWith('http') ? (
               <img 
                 src={currentPlayer.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]} 
                 alt="Player" 
-                style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px' }} 
+                onLoad={() => setImageLoading(false)}
+                onError={() => setImageLoading(false)}
+                style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px', display: imageLoading ? 'none' : 'block' }} 
               />
             ) : currentPlayer.image ? (
               <img 
                 src={`/image/${currentPlayer.image}`} 
                 alt="Player" 
-                style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px' }} 
-                onError={e => { e.target.parentElement.innerHTML = '<i class="fas fa-user" style="font-size: 150px; color: var(--text-muted); margin-bottom: 20px;"></i>'; }}
+                onLoad={() => setImageLoading(false)}
+                onError={() => setImageLoading(false)}
+                style={{ width: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '10px', marginBottom: '20px', display: imageLoading ? 'none' : 'block' }} 
               />
             ) : (
               <div style={{ width: '100%', height: '300px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>

@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import api from '../api/axios';
+import Loader from '../components/Loader';
 
 const PublicPlayers = () => {
   const [players, setPlayers] = useState([]);
   const [franchises, setFranchises] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(0);
   
   const [filter, setFilter] = useState('all'); // all, sold, unsold, remaining
   const [roleFilter, setRoleFilter] = useState('all'); // 'all' or specific role
@@ -19,12 +23,35 @@ const PublicPlayers = () => {
         ]);
         setPlayers(playersRes.data);
         setFranchises(franchisesRes.data);
+        // We set initial loading to false once data is here, 
+        // but imageLoading is separate. 
+        // Actually, for All Players, I'll release loader after data + a small grace period 
+        // because waiting for 100+ images is too slow.
+        setTimeout(() => setLoading(false), 800);
       } catch (err) {
         console.error(err);
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  const handleFilterChange = (type, value) => {
+    setIsFiltering(true);
+    if (type === 'status') {
+      setFilter(value);
+      setFranchiseFilter('all');
+    } else if (type === 'role') {
+      setRoleFilter(value);
+    } else if (type === 'franchise') {
+      setFranchiseFilter(value);
+      if (value !== 'all') setFilter('none');
+      else setFilter('all');
+    }
+    
+    // Dim the UI for 500ms to show it's updating
+    setTimeout(() => setIsFiltering(false), 500);
+  };
 
   const filteredPlayers = players.filter(p => {
     let matchStatus = true;
@@ -52,8 +79,9 @@ const PublicPlayers = () => {
 
   return (
     <div className="container">
+      {(loading || isFiltering) && <Loader text={isFiltering ? "Updating Player List..." : "Finalizing Team Sheets..."} />}
       <h2 className="title gradient-text">PPL-2026 Player Roster</h2>
-
+      
       {filter === 'all' && topSignings.length > 0 && (
         <div style={{ marginBottom: '50px' }}>
           <h3 style={{ textAlign: 'center', color: 'var(--accent-gold)', marginBottom: '30px' }}>🏆 Blockbuster Signings 🏆</h3>
@@ -62,7 +90,13 @@ const PublicPlayers = () => {
             {/* Rank 2 (Silver) */}
             {topSignings[1] && (
               <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.8)', borderTop: '4px solid silver' }}>
-                <img src={topSignings[1].image ? `/image/${topSignings[1].image}` : 'https://via.placeholder.com/60'} alt="P2" style={{ width: '60px', height: '60px', borderRadius: '50%', marginBottom: '10px' }} onError={e => e.target.style.display = 'none'} />
+                <img 
+                  src={topSignings[1].image ? `/image/${topSignings[1].image}` : 'https://via.placeholder.com/60'} 
+                  alt="P2" 
+                  onLoad={() => setImagesLoaded(prev => prev + 1)}
+                  onError={() => setImagesLoaded(prev => prev + 1)}
+                  style={{ width: '60px', height: '60px', borderRadius: '50%', marginBottom: '10px' }} 
+                />
                 <h4 style={{ margin: 0, textAlign: 'center' }}>{topSignings[1].full_name}</h4>
                 <strong style={{ color: 'silver', fontSize: '1.2rem' }}>₹{topSignings[1].sold_price}</strong>
               </motion.div>
@@ -72,7 +106,13 @@ const PublicPlayers = () => {
             {topSignings[0] && (
               <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '240px', height: '220px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(251,191,36,0.1)', borderTop: '6px solid gold', boxShadow: '0 0 30px rgba(251,191,36,0.2)' }}>
                 <div style={{ position: 'absolute', top: '-15px', background: 'gold', color: 'black', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>1</div>
-                <img src={topSignings[0].image ? `/image/${topSignings[0].image}` : 'https://via.placeholder.com/80'} alt="P1" style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '10px', border: '2px solid gold' }} onError={e => e.target.style.display = 'none'} />
+                <img 
+                  src={topSignings[0].image ? `/image/${topSignings[0].image}` : 'https://via.placeholder.com/80'} 
+                  alt="P1" 
+                  onLoad={() => setImagesLoaded(prev => prev + 1)}
+                  onError={() => setImagesLoaded(prev => prev + 1)}
+                  style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '10px', border: '2px solid gold' }} 
+                />
                 <h3 style={{ margin: 0, textAlign: 'center', fontSize: '1.4rem' }}>{topSignings[0].full_name}</h3>
                 <strong style={{ color: 'gold', fontSize: '1.5rem' }}>₹{topSignings[0].sold_price}</strong>
               </motion.div>
@@ -81,7 +121,13 @@ const PublicPlayers = () => {
             {/* Rank 3 (Bronze) */}
             {topSignings[2] && (
               <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.8)', borderTop: '4px solid #cd7f32' }}>
-                <img src={topSignings[2].image ? `/image/${topSignings[2].image}` : 'https://via.placeholder.com/50'} alt="P3" style={{ width: '50px', height: '50px', borderRadius: '50%', marginBottom: '10px' }} onError={e => e.target.style.display = 'none'} />
+                <img 
+                  src={topSignings[2].image ? `/image/${topSignings[2].image}` : 'https://via.placeholder.com/50'} 
+                  alt="P3" 
+                  onLoad={() => setImagesLoaded(prev => prev + 1)}
+                  onError={() => setImagesLoaded(prev => prev + 1)}
+                  style={{ width: '50px', height: '50px', borderRadius: '50%', marginBottom: '10px' }} 
+                />
                 <h4 style={{ margin: 0, textAlign: 'center' }}>{topSignings[2].full_name}</h4>
                 <strong style={{ color: '#cd7f32', fontSize: '1.1rem' }}>₹{topSignings[2].sold_price}</strong>
               </motion.div>
@@ -90,12 +136,11 @@ const PublicPlayers = () => {
           </div>
         </div>
       )}
-
       <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '15px' }}>
-        <button className={`btn ${filter === 'all' ? 'btn-gold' : 'btn-outline'}`} onClick={() => { setFilter('all'); setFranchiseFilter('all'); }}>All Status</button>
-        <button className={`btn ${filter === 'sold' ? 'btn-gold' : 'btn-outline'}`} onClick={() => { setFilter('sold'); setFranchiseFilter('all'); }}>Sold</button>
-        <button className={`btn ${filter === 'remaining' ? 'btn-gold' : 'btn-outline'}`} onClick={() => { setFilter('remaining'); setFranchiseFilter('all'); }}>Remaining</button>
-        <button className={`btn ${filter === 'unsold' ? 'btn-gold' : 'btn-outline'}`} onClick={() => { setFilter('unsold'); setFranchiseFilter('all'); }}>Unsold</button>
+        <button className={`btn ${filter === 'all' ? 'btn-gold' : 'btn-outline'}`} onClick={() => handleFilterChange('status', 'all')}>All Status</button>
+        <button className={`btn ${filter === 'sold' ? 'btn-gold' : 'btn-outline'}`} onClick={() => handleFilterChange('status', 'sold')}>Sold</button>
+        <button className={`btn ${filter === 'remaining' ? 'btn-gold' : 'btn-outline'}`} onClick={() => handleFilterChange('status', 'remaining')}>Remaining</button>
+        <button className={`btn ${filter === 'unsold' ? 'btn-gold' : 'btn-outline'}`} onClick={() => handleFilterChange('status', 'unsold')}>Unsold</button>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
@@ -103,7 +148,7 @@ const PublicPlayers = () => {
           className="input-field" 
           style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
+          onChange={(e) => handleFilterChange('role', e.target.value)}
         >
           <option value="all">-- All Roles --</option>
           {availableRoles.map(r => (
@@ -115,15 +160,7 @@ const PublicPlayers = () => {
           className="input-field" 
           style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
           value={franchiseFilter}
-          onChange={(e) => {
-            setFranchiseFilter(e.target.value);
-            // Deactivate Status buttons when checking a specific franchise
-            if (e.target.value !== 'all') {
-              setFilter('none');
-            } else {
-              setFilter('all');
-            }
-          }}
+          onChange={(e) => handleFilterChange('franchise', e.target.value)}
         >
           <option value="all">-- All Franchises --</option>
           {franchises.map(f => (
@@ -143,18 +180,21 @@ const PublicPlayers = () => {
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           >
             {player.image?.startsWith('http') ? (
-              <img
-                src={player.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]}
-                alt={player.full_name}
-                style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
-              />
-            ) : player.image ? (
-              <img
-                src={`/image/${player.image}`}
-                alt={player.full_name}
-                style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
-                onError={e => { e.target.parentElement.innerHTML = '<i class="fas fa-user" style="font-size: 80px; color: var(--text-muted); margin-bottom: 15px;"></i>'; }}
-              />
+                <img
+                  src={player.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]}
+                  alt={player.full_name}
+                  onLoad={() => setImagesLoaded(prev => prev + 1)}
+                  onError={() => setImagesLoaded(prev => prev + 1)}
+                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+                />
+              ) : player.image ? (
+                <img
+                  src={`/image/${player.image}`}
+                  alt={player.full_name}
+                  onLoad={() => setImagesLoaded(prev => prev + 1)}
+                  onError={() => setImagesLoaded(prev => prev + 1)}
+                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+                />
             ) : (
               <div style={{ width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px' }}>
                 <i className="fas fa-user" style={{ fontSize: '60px', color: 'var(--text-muted)' }}></i>
