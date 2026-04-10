@@ -39,10 +39,10 @@ const AdminAuction = () => {
         api.get('/auction/franchises'),
         api.get('/auction/players/all')
       ]);
-      
+
       const allPlayers = allPlayersRes.data;
       const unsoldPlayers = allPlayers.filter(p => !p.franchise_id && p.unsold_status === 0);
-      
+
       const targetPlayer = role
         ? unsoldPlayers.find(p => p.playing_role === role)
         : unsoldPlayers[0];
@@ -117,7 +117,7 @@ const AdminAuction = () => {
       {(loading || isProcessing) && (
         <Loader text={isProcessing ? "Processing Sale..." : "Opening Auction Records..."} />
       )}
-      
+
       <div className="container" style={{ visibility: (loading || isProcessing) ? 'hidden' : 'visible' }}>
         {flashing && <div className="flash-screen"></div>}
         <h2 className="title gradient-text">Live Auction Control Room</h2>
@@ -153,23 +153,23 @@ const AdminAuction = () => {
                     <Loader text="Rendering Player Info..." />
                   </div>
                 )}
-                
+
                 {currentPlayer.image ? (
                   <img
-                    src={currentPlayer.image.startsWith('http') 
+                    src={currentPlayer.image.startsWith('http')
                       ? currentPlayer.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]
                       : `/image/${currentPlayer.image}`
                     }
                     alt="Player"
                     onLoad={() => setImageLoading(false)}
                     onError={() => setImageLoading(false)}
-                    style={{ 
-                      width: '100%', 
-                      maxHeight: '400px', 
-                      objectFit: 'contain', 
-                      borderRadius: '10px', 
+                    style={{
+                      width: '100%',
+                      maxHeight: '400px',
+                      objectFit: 'contain',
+                      borderRadius: '10px',
                       marginBottom: '20px',
-                      display: imageLoading ? 'none' : 'block' 
+                      display: imageLoading ? 'none' : 'block'
                     }}
                   />
                 ) : (
@@ -229,11 +229,11 @@ const AdminAuction = () => {
             {franchises.map(f => (
               <div key={f._id} className="glass-panel" style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <img 
-                    src={`/image/franchiese/${f.logo}`} 
-                    alt="logo" 
+                  <img
+                    src={`/image/franchiese/${f.logo}`}
+                    alt="logo"
                     onError={(e) => e.target.style.display = 'none'}
-                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: '2px solid var(--accent-gold)' }} 
+                    style={{ width: '50px', height: '50px', borderRadius: '50%', border: '2px solid var(--accent-gold)' }}
                   />
                   <div>
                     <h4 style={{ margin: 0 }}>{f.frenchises_name}</h4>
