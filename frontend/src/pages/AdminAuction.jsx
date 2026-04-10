@@ -22,6 +22,7 @@ const AdminAuction = () => {
   
   const [roles, setRoles] = useState([]);
   const [roleFilter, setRoleFilter] = useState('');
+  const [feesFilter, setFeesFilter] = useState('all'); // all, paid, unpaid
 
   useEffect(() => {
     if (!user || user.role !== 'admin') {
@@ -31,9 +32,9 @@ const AdminAuction = () => {
     fetchData();
   }, [user, navigate]);
 
-  const fetchData = async (role = roleFilter) => {
+  const fetchData = async (role = roleFilter, fees = feesFilter) => {
     try {
-      if (role !== roleFilter) setLoading(true); // show loader if switching roles
+      if (role !== roleFilter || fees !== feesFilter) setLoading(true);
       setImageLoading(true);
       const [franchiseRes, allPlayersRes] = await Promise.all([
         api.get('/auction/franchises'),
@@ -41,8 +42,13 @@ const AdminAuction = () => {
       ]);
       
       const allPlayers = allPlayersRes.data;
-      const unsoldPlayers = allPlayers.filter(p => !p.franchise_id && p.unsold_status === 0);
+      let unsoldPlayers = allPlayers.filter(p => !p.franchise_id && p.unsold_status === 0);
       
+      // Apply Fees Filter
+      if (fees === 'paid') unsoldPlayers = unsoldPlayers.filter(p => p.fees === 500);
+      else if (fees === 'unpaid') unsoldPlayers = unsoldPlayers.filter(p => p.fees === 0);
+
+      // Determine the next player based on the role filter
       const targetPlayer = role 
         ? unsoldPlayers.find(p => p.playing_role === role) 
         : unsoldPlayers[0];
@@ -113,23 +119,43 @@ const AdminAuction = () => {
       <h2 className="title gradient-text">Live Auction Control Room</h2>
       
       {/* ... filter select with fetchData ... */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px', gap: '15px' }}>
-        <h3 style={{ color: 'var(--text-main)', margin: 0, alignSelf: 'center' }}>🎯 Filter Next Player By Role:</h3>
-        <select 
-          className="input-field" 
-          style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
-          value={roleFilter}
-          onChange={(e) => {
-            const role = e.target.value;
-            setRoleFilter(role);
-            fetchData(role);
-          }}
-        >
-          <option value="">-- All Roles --</option>
-          {roles.map(r => (
-            <option key={r} value={r}>{r}</option>
-          ))}
-        </select>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px', gap: '15px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <h3 style={{ color: 'var(--text-main)', margin: 0 }}>🎯 Role:</h3>
+          <select 
+            className="input-field" 
+            style={{ width: '200px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
+            value={roleFilter}
+            onChange={(e) => {
+              const role = e.target.value;
+              setRoleFilter(role);
+              fetchData(role, feesFilter);
+            }}
+          >
+            <option value="">-- All Roles --</option>
+            {roles.map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <h3 style={{ color: 'var(--text-main)', margin: 0 }}>💰 Fees:</h3>
+          <select 
+            className="input-field" 
+            style={{ width: '200px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
+            value={feesFilter}
+            onChange={(e) => {
+              const fees = e.target.value;
+              setFeesFilter(fees);
+              fetchData(roleFilter, fees);
+            }}
+          >
+            <option value="all">Check All</option>
+            <option value="paid">Paid (₹500)</option>
+            <option value="unpaid">Unpaid (₹0)</option>
+          </select>
+        </div>
       </div>
 
       {message && <div style={{ background: 'var(--error-color)', padding: '10px', borderRadius: '5px', marginBottom: '20px', textAlign: 'center' }}>{message}</div>}
@@ -203,7 +229,9 @@ const AdminAuction = () => {
             </>
           ) : (
             <h3 style={{ color: 'var(--text-muted)' }}>
-              {roleFilter ? `All players with role "${roleFilter}" have been auctioned!` : 'All players have been auctioned!'}
+              {roleFilter || feesFilter !== 'all' 
+                ? `All players matching these filters have been auctioned!` 
+                : 'All players have been auctioned!'}
             </h3>
           )}
         </div>
