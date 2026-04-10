@@ -114,7 +114,7 @@ const Home = () => {
 
       <h2 style={{ marginBottom: '20px', color: 'var(--accent-gold)' }}>Franchises</h2>
 
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {franchises.map((franchise, idx) => (
           <motion.div
             key={franchise._id}
