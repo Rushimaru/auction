@@ -89,7 +89,7 @@ const PublicPlayers = () => {
 
             {/* Rank 2 (Silver) */}
             {topSignings[1] && (
-              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.8)', borderTop: '4px solid silver' }}>
+              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', borderTop: '4px solid silver' }}>
                 <img 
                   src={topSignings[1].image ? `/image/${topSignings[1].image}` : 'https://via.placeholder.com/60'} 
                   alt="P2" 
@@ -104,8 +104,8 @@ const PublicPlayers = () => {
 
             {/* Rank 1 (Gold) */}
             {topSignings[0] && (
-              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '240px', height: '220px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(251,191,36,0.1)', borderTop: '6px solid gold', boxShadow: '0 0 30px rgba(251,191,36,0.2)' }}>
-                <div style={{ position: 'absolute', top: '-15px', background: 'gold', color: 'black', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>1</div>
+              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '240px', height: '220px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(217,119,6,0.05)', borderTop: '6px solid gold', boxShadow: '0 0 30px rgba(217,119,6,0.1)' }}>
+                <div style={{ position: 'absolute', top: '-15px', background: 'gold', color: 'black', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>1</div>
                 <img 
                   src={topSignings[0].image ? `/image/${topSignings[0].image}` : 'https://via.placeholder.com/80'} 
                   alt="P1" 
@@ -120,7 +120,7 @@ const PublicPlayers = () => {
 
             {/* Rank 3 (Bronze) */}
             {topSignings[2] && (
-              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.8)', borderTop: '4px solid #cd7f32' }}>
+              <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel" style={{ width: '200px', height: '160px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', borderTop: '4px solid #cd7f32' }}>
                 <img 
                   src={topSignings[2].image ? `/image/${topSignings[2].image}` : 'https://via.placeholder.com/50'} 
                   alt="P3" 
@@ -146,7 +146,7 @@ const PublicPlayers = () => {
       <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
         <select 
           className="input-field" 
-          style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
+          style={{ width: '250px', background: '#ffffff', border: '1px solid var(--accent-gold)' }}
           value={roleFilter}
           onChange={(e) => handleFilterChange('role', e.target.value)}
         >
@@ -158,7 +158,7 @@ const PublicPlayers = () => {
         
         <select 
           className="input-field" 
-          style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
+          style={{ width: '250px', background: '#ffffff', border: '1px solid var(--accent-gold)' }}
           value={franchiseFilter}
           onChange={(e) => handleFilterChange('franchise', e.target.value)}
         >
@@ -185,7 +185,7 @@ const PublicPlayers = () => {
                   alt={player.full_name}
                   onLoad={() => setImagesLoaded(prev => prev + 1)}
                   onError={() => setImagesLoaded(prev => prev + 1)}
-                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid var(--accent-gold)', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
                 />
               ) : player.image ? (
                 <img
@@ -193,10 +193,10 @@ const PublicPlayers = () => {
                   alt={player.full_name}
                   onLoad={() => setImagesLoaded(prev => prev + 1)}
                   onError={() => setImagesLoaded(prev => prev + 1)}
-                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid white' }}
+                  style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '50%', marginBottom: '15px', border: '3px solid var(--accent-gold)', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
                 />
             ) : (
-              <div style={{ width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px' }}>
+              <div style={{ width: '150px', height: '150px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '15px', border: '1px solid #e2e8f0' }}>
                 <i className="fas fa-user" style={{ fontSize: '60px', color: 'var(--text-muted)' }}></i>
               </div>
             )}
@@ -204,16 +204,16 @@ const PublicPlayers = () => {
             <p style={{ color: 'var(--text-muted)' }}>{player.playing_role}</p>
 
             {player.franchise_id ? (
-              <div style={{ marginTop: '15px', background: 'rgba(59, 130, 246, 0.2)', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center' }}>
-                <strong style={{ color: 'var(--accent-gold)' }}>Sold: ₹{player.sold_price}</strong>
-                <p style={{ fontSize: '0.9rem', marginTop: '5px' }}>Team: {player.franchise_id.frenchises_name}</p>
+              <div style={{ marginTop: '15px', background: '#ecfdf5', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center', border: '1px solid #10b981' }}>
+                <strong style={{ color: '#047857' }}>Sold: ₹{player.sold_price}</strong>
+                <p style={{ fontSize: '0.9rem', marginTop: '5px', color: '#065f46' }}>Team: {player.franchise_id.frenchises_name}</p>
               </div>
             ) : player.unsold_status === 1 ? (
-              <div style={{ marginTop: '15px', background: 'rgba(239, 68, 68, 0.2)', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center' }}>
-                <strong style={{ color: 'var(--error-color)' }}>Unsold</strong>
+              <div style={{ marginTop: '15px', background: '#fef2f2', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center', border: '1px solid #ef4444' }}>
+                <strong style={{ color: '#b91c1c' }}>Unsold</strong>
               </div>
             ) : (
-              <div style={{ marginTop: '15px', background: 'rgba(255, 255, 255, 0.1)', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center' }}>
+              <div style={{ marginTop: '15px', background: '#f8fafc', padding: '10px', borderRadius: '8px', width: '100%', textAlign: 'center', border: '1px solid #e2e8f0' }}>
                 <strong style={{ color: 'var(--text-main)' }}>Available</strong>
               </div>
             )}

@@ -126,7 +126,7 @@ const AdminAuction = () => {
           <h3 style={{ color: 'var(--text-main)', margin: 0, alignSelf: 'center' }}>🎯 Filter Next Player By Role:</h3>
           <select
             className="input-field"
-            style={{ width: '250px', background: 'rgba(0,0,0,0.5)', border: '1px solid var(--accent-gold)' }}
+            style={{ width: '250px', background: '#ffffff', border: '1px solid var(--accent-gold)' }}
             value={roleFilter}
             onChange={(e) => {
               const role = e.target.value;
@@ -173,7 +173,7 @@ const AdminAuction = () => {
                     }}
                   />
                 ) : (
-                  <div style={{ width: '100%', height: '300px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+                  <div style={{ width: '100%', height: '300px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px', border: '1px solid #e2e8f0' }}>
                     <i className="fas fa-user-tie" style={{ fontSize: '120px', color: 'var(--text-muted)' }}></i>
                   </div>
                 )}
@@ -184,11 +184,11 @@ const AdminAuction = () => {
                 </p>
 
                 <div style={{ width: '100%', display: 'flex', gap: '10px', flexDirection: 'column' }}>
-                  <div style={{ background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '10px' }}>
+                  <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                     <form onSubmit={handleSell} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <select
                         className="input-field"
-                        style={{ background: 'var(--bg-secondary)', color: 'white' }}
+                        style={{ background: '#ffffff', color: 'var(--text-main)' }}
                         value={selectedFranchise}
                         onChange={(e) => setSelectedFranchise(e.target.value)}
                       >

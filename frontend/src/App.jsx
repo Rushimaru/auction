@@ -16,9 +16,9 @@ function App() {
         <Toaster position="top-center" 
           toastOptions={{
             style: {
-              background: '#1e293b',
-              color: '#f8fafc',
-              border: '1px solid #fbbf24'
+              background: '#ffffff',
+              color: '#0f172a',
+              border: '1px solid #d97706'
             }
           }}
         />

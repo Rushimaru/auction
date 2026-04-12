@@ -74,13 +74,13 @@ const Home = () => {
       />
 
       {recentSold.length > 0 && (
-        <div style={{ marginBottom: '40px', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid var(--glass-border)', borderBottom: '1px solid var(--glass-border)', padding: '10px 0' }}>
+        <div style={{ marginBottom: '40px', background: '#f1f5f9', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '10px 0' }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--text-muted)', marginBottom: '10px' }}>🔥 RECENT TRANSFERS 🔥</h3>
           <div className="marquee-container">
             <div className="marquee-content">
               {recentSold.map(player => (
-                <div key={player._id} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', margin: '0 30px', background: 'rgba(0,0,0,0.8)', padding: '5px 15px', borderRadius: '25px', border: '1px solid var(--accent-gold)' }}>
-                  <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', flexShrink: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div key={player._id} style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', margin: '0 30px', background: '#ffffff', padding: '5px 15px', borderRadius: '25px', border: '1px solid var(--accent-gold)', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                  <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#f1f5f9', flexShrink: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     {player.image?.startsWith('http') ? (
                       <img 
                         src={player.image.replace('open?id=', 'thumbnail?id=').replace('/file/d/', '/thumbnail?id=').split('/view')[0]} 
@@ -101,7 +101,7 @@ const Home = () => {
                       <i className="fas fa-user" style={{ fontSize: '15px' }}></i>
                     )}
                   </div>
-                  <span style={{ fontWeight: 'bold', color: 'white' }}>{player.full_name}</span>
+                  <span style={{ fontWeight: 'bold', color: 'var(--text-main)' }}>{player.full_name}</span>
                   <span style={{ color: 'var(--text-muted)' }}>sold to</span>
                   <span style={{ color: 'var(--accent-gold)' }}>{player.franchise_id?.frenchises_name}</span>
                   <span style={{ background: 'var(--accent-gold)', color: 'black', padding: '2px 8px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 'bold' }}>₹{player.sold_price}</span>
@@ -132,7 +132,7 @@ const Home = () => {
               style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px', border: '3px solid var(--accent-gold)' }}
             />
             <div style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '0.85rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '5px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '5px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Budget:</span>
                 <span style={{ color: 'var(--accent-gold)', fontWeight: 'bold' }}>₹{franchise.remaining_amount} / {franchise.total_amount}</span>
               </div>
